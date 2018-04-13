@@ -47,7 +47,7 @@ We'll start by using Terraform to "provision" resources on your AWS account. Ter
 Terraform also has a great community of open source modules available in the [Terraform Registry](https://registry.terraform.io/). We'll be using several of the pre-built AWS modules now.
 
 ## Setting up your Virtual Private Cloud (VPC)
-In past sessions, someone gets hacked and Bitcoin miners go crazy burning through AWS resources. To ensure that simple mistakes don’t cost you tremendously, you'll set up guardrails with a network that can only contain a fixed number of nodes. If you need more instances later, your PD can expand your network. 
+In past sessions, someone gets hacked and Bitcoin miners go crazy burning through AWS resources. To ensure that simple mistakes don’t cost you tremendously, you'll set up guardrails with a network that can only contain a fixed number of nodes. If you need more instances later, we can help you expand your network. 
 
 AWS uses software-defined network to offer a small network that is secure from others called a Virtual Private Cloud (VPC). We'll use Terraform to set up a simple and small "sandbox VPC" where you can build your infrastructure safely.
 
@@ -60,7 +60,7 @@ Then initialize Terraform and apply the configuration we've set up in the `.tf` 
     terraform init
     terraform apply
     
-Terraform will ask your name (enter whatever you want), show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments, you should see a successful message like this: 
+Terraform will ask your name (enter whatever you want), show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments (the NAT gateways can take a minute or two), you should see a successful message like this: 
 
     Apply complete! Resources: 15 added, 0 changed, 0 destroyed.
 
