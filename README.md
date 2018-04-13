@@ -1,6 +1,8 @@
 # AWS Ops for Insight
 Collection of Terraform and Ansible scripts for easy AWS operations
 
+# Set up your Linux User on the Shared Control Machine
+
 ## Logging into the Control Machine
 Log into your user on the Controlling Machine provided by Insight, which you should be able to do with a command using the following command: 
 
@@ -38,4 +40,29 @@ Whenever you change your `.profile`, don't forget to source it with the command:
 
     . ~/.profile
     
+# Setting up your AWS Environment
+
+We'll start by using Terraform to "provision" resources on your AWS account. Terraform is an industry-standard open source technology for Provisioning hardware, whether on any popular cloud provider (e.g. AWS, GCP), or in-house data centers. Terraform is written in Go, and is designed to quickly and easily create and destroy infrastructure of hundreds of resources in parallel. 
+
+Terraform also has a great community of open source modules available in the [Terraform Registry](https://registry.terraform.io/). We'll be using several of the pre-built AWS modules now.
+
+## Setting up your Virtual Private Cloud (VPC)
+In past sessions, someone gets hacked and Bitcoin miners go crazy burning through AWS resources. To ensure that simple mistakes don’t cost you tremendously, you'll set up guardrails with a network that can only contain a fixed number of nodes. If you need more instances later, your PD can expand your network. 
+
+AWS uses software-defined network to offer a small network that is secure from others called a Virtual Private Cloud (VPC). We'll use Terraform to set up a simple and small "sandbox VPC" where you can build your infrastructure safely.
+
+Move into the `terraform` directory of the repo you cloned:
+
+    cd terraform
+    
+Then initialize Terraform and apply the configuration we've set up in the `.tf` files within that directory:
+
+    terraform init
+    terraform apply
+    
+After saying `yes` to the prompt, and waiting a few moments, you should see a successful message. Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, and it shouldn't lead to any issues. If you ever want to tear down your infrastructure, you can always do that with the command:
+
+    terraform destroy
+    
+
 
