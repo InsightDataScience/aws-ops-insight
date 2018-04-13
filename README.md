@@ -1,4 +1,4 @@
-# peg-up
+# AWS Ops for Insight
 Collection of Terraform and Ansible scripts for easy AWS operations
 
 ## Logging into the Control Machine
