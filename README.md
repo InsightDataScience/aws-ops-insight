@@ -60,7 +60,28 @@ Then initialize Terraform and apply the configuration we've set up in the `.tf` 
     terraform init
     terraform apply
     
-After saying `yes` to the prompt, and waiting a few moments, you should see a successful message. Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, and it shouldn't lead to any issues. If you ever want to tear down your infrastructure, you can always do that with the command:
+Terraform will show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments, you should see a successful message like this: 
+
+    Apply complete! Resources: 15 added, 0 changed, 0 destroyed.
+
+    Outputs:
+
+    database_subnets = []
+    nat_public_ips = [
+        52.36.7.200
+    ]
+    private_subnets = [
+        subnet-69f74f10
+    ]
+    public_subnets = [
+        subnet-b2f44ccb
+    ]
+    redshift_subnets = []
+    vpc_id = vpc-3e4d1047
+
+Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, without any issues. It's also smart about only changing what it absolutely needs to change.
+
+If you ever want to tear down your infrastructure, you can always do that with the command:
 
     terraform destroy
     
