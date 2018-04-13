@@ -66,7 +66,6 @@ Terraform will ask your name (enter whatever you want), show you it's plan to cr
 
     Outputs:
 
-    database_subnets = []
     nat_public_ips = [
         52.36.7.200
     ]
@@ -76,7 +75,6 @@ Terraform will ask your name (enter whatever you want), show you it's plan to cr
     public_subnets = [
         subnet-b2f44ccb
     ]
-    redshift_subnets = []
     vpc_id = vpc-3e4d1047
 
 Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, without any issues. It's also smart about only changing what it absolutely needs to change. For example if you ran the apply command again, but use a different name, it will only rename a few resources rather than tearing down everything and spinning up more.
@@ -85,5 +83,20 @@ If you ever want to tear down your infrastructure, you can always do that with t
 
     terraform destroy
     
+### Setting Terraform Variables
+You probably don't want to enter your name everytime you run the apply command (and you can't automate that), so let's set the variable. You could set the variable from the command line with something like:
 
+    terraform apply -var 'fellow_name=david'
+    
+or by setting an environment variable that starts with `TF_VAR_` like:
+
+    export TF_VAR_fellow_name=david
+    
+(but don't forget to source your `.profile`). Note that Terraform treats your AWS credentials specially - they don't need the `TF_VAR` prefix to be detected.
+
+Finally, you can set variables in the file `terraform.tfvars`. Go into the file and add the following to the bottom (but use your name of course):
+
+    fellow_name="david"
+
+For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD BE COMMITTED TO GITHUB**, so it's best to use environment variables for your credentials. For other types of variables, you should use the method that's most convenient (e.g. files are easy to share with others, but commandline is easier to automate).
 
