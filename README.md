@@ -51,16 +51,16 @@ In past sessions, someone gets hacked and Bitcoin miners go crazy burning throug
 
 AWS uses software-defined network to offer a small network that is secure from others called a Virtual Private Cloud (VPC). We'll use Terraform to set up a simple and small "sandbox VPC" where you can build your infrastructure safely.
 
-Move into the `terraform` directory of the repo you cloned:
+Move into the `terraform/networking` directory of the repo you cloned:
 
-    cd terraform
+    cd terraform/networking
     
 Then initialize Terraform and apply the configuration we've set up in the `.tf` files within that directory:
 
     terraform init
     terraform apply
     
-Terraform will show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments, you should see a successful message like this: 
+Terraform will ask your name (enter whatever you want), show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments, you should see a successful message like this: 
 
     Apply complete! Resources: 15 added, 0 changed, 0 destroyed.
 
@@ -79,7 +79,7 @@ Terraform will show you it's plan to create, modify, or destroy resources to get
     redshift_subnets = []
     vpc_id = vpc-3e4d1047
 
-Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, without any issues. It's also smart about only changing what it absolutely needs to change.
+Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, without any issues. It's also smart about only changing what it absolutely needs to change. For example if you ran the apply command again, but use a different name, it will only rename a few resources rather than tearing down everything and spinning up more.
 
 If you ever want to tear down your infrastructure, you can always do that with the command:
 
