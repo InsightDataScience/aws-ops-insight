@@ -6,7 +6,7 @@ Log into your user on the Controlling Machine provided by Insight. This machine 
 
 Once you're logged in, clone this repo:
 
-    git clone https://github.com/InsightDataScience/peg-up/
+    git clone https://github.com/InsightDataScience/aws-ops-insight.git
 
 ## AWS credentials for your personal user
 Add your AWS credentials to your `.profile` using your editor of choice. Of course, your credentials will be different, but you should have something like this in your `.profile`:
