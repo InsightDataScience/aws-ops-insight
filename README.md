@@ -2,9 +2,27 @@
 Collection of Terraform and Ansible scripts for easy AWS operations
 
 ## Logging into the Control Machine
-Log into your user on the Controlling Machine provided by Insight. This machine is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup.
+Log into your user on the Controlling Machine provided by Insight, which you should be able to do with a command using the following command: 
 
-Once you're logged in, clone this repo:
+    ssh -i <path/to/your/pem.key> <first_name>-<last_initial>@54.69.222.167
+    
+For example:
+
+    ssh -i ~/.ssh/dd-ansible.pem david-d@54.69.222.167
+
+Alternatively, I added the following to my `.ssh/config`:
+
+    Host dd-contol
+        HostName 54.69.222.167
+        User david-d
+        Port 22
+        IdentityFile ~/.ssh/dd-ansible.pem
+        
+and then log in using the command `ssh dd-control`.
+
+## Clone this repo
+
+This machine is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup. However, you still need to download the latest scripts from this repo:
 
     git clone https://github.com/InsightDataScience/aws-ops-insight.git
 
