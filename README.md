@@ -33,3 +33,9 @@ Your Linux user has a `.profile` file in your home directory where you can confi
     export AWS_SECRET_ACCESS_KEY=1abc2d34e/f5ghJKlmnopqSr678stUV/WXYZa12
 
 **WARNING: DO NOT COMMIT YOUR AWS CREDENTIALS TO GITHUB!** AWS and bots are constantly searching Github for these credentials, and you will either have your account hacked, or your credentials revoked by AWS.
+
+Whenever you change your `.profile`, don't forget to source it with the command:
+
+    . ~/.profile
+    
+
