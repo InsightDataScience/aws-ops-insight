@@ -5,7 +5,7 @@
 
 
 # General module for configuring security groups
-module "completely_open_sg" {
+module "totally_opened_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "open_to_all"
@@ -42,4 +42,6 @@ module "security-group_ssh_open" {
     Terraform   = "true"
   }
 }
+
+
 
