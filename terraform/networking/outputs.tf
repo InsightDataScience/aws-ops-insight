@@ -24,3 +24,44 @@ output "nat_public_ips" {
   description = "List of public Elastic IPs created for AWS NAT Gateway"
   value       = ["${module.vpc.nat_public_ips}"]
 }
+
+# Security Groups
+output "open_sg_id" {
+  description = "The ID of the security group"
+  value       = "${module.completely_open_sg.this_security_group_id}"
+}
+
+output "open_sg_owner_id" {
+  description = "The owner ID"
+  value       = "${module.completely_open_sg.this_security_group_owner_id}"
+}
+
+output "open_sg_name" {
+  description = "The name of the security group"
+  value       = "${module.completely_open_sg.this_security_group_name}"
+}
+
+output "open_sg_description" {
+  description = "The description of the security group"
+  value       = "${module.completely_open_sg.this_security_group_description}"
+}
+
+output "open_ssh_sg_id" {
+  description = "The ID of the security group"
+  value       = "${module.security-group_ssh_open.this_security_group_id}"
+}
+
+output "open_ssh_sg_owner_id" {
+  description = "The owner ID"
+  value       = "${module.security-group_ssh_open.this_security_group_owner_id}"
+}
+
+output "open_ssh_sg_name" {
+  description = "The name of the security group"
+  value       = "${module.security-group_ssh_open.this_security_group_name}"
+}
+
+output "open_ssh_sg_description" {
+  description = "The description of the security group"
+  value       = "${module.security-group_ssh_open.this_security_group_description}"
+}

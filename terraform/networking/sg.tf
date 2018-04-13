@@ -1,6 +1,32 @@
 # Configuration for security groups
 
-module "security-group_ssh" {
+# For more details and options, see the module page below
+# https://registry.terraform.io/modules/terraform-aws-modules/security-group/aws/1.9.0
+
+
+# General module for configuring security groups
+module "completely_open_sg" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name        = "open_to_all"
+  description = "Security group for to make all ports publicly open...not secure at all"
+  vpc_id      = "${module.vpc.vpc_id}"
+
+  ingress_cidr_blocks      = ["10.0.0.0/26"]
+  ingress_with_cidr_blocks = [
+    {
+      rule        = "all-all"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+}
+
+
+# Check out all the sub-modules at the below URL
+# https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules
+
+# Sub-module for configuring an SSH security group
+module "security-group_ssh_open" {
   source  = "terraform-aws-modules/security-group/aws//modules/ssh"
   version = "1.20.0"
 
@@ -16,17 +42,4 @@ module "security-group_ssh" {
     Terraform   = "true"
   }
 }
-
-#######
-# HTTP
-#######
-#module "http_sg" {
-#  source = "../../modules/http-80"
-#
-#  name        = "http-sg"
-#  description = "Security group with HTTP ports open for everybody (IPv4 CIDR), egress ports are all world open"
-#  vpc_id      = "${data.aws_vpc.default.id}"
-#
-#  ingress_cidr_blocks = ["0.0.0.0/0"]
-#}
 
