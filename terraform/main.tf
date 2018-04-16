@@ -94,6 +94,8 @@ For all the arguments and options, visit:
 https://www.terraform.io/docs/providers/aws/r/instance.html
 
  */
+
+# Configuration for a "master" instance
 resource "aws_instance" "cluster_master" {
     ami							= "ami-4e79ed36"
     instance_type 	= "t2.micro"
@@ -110,7 +112,7 @@ resource "aws_instance" "cluster_master" {
     }
 
     tags {
-      Name        = "${var.cluster_name}-master"
+      Name        = "${var.cluster_name}-master-${count.index}"
       Owner       = "${var.fellow_name}"
   	  Environment = "dev"
     	Terraform   = "true"
@@ -118,10 +120,34 @@ resource "aws_instance" "cluster_master" {
 
 }
 
-/*
-resource "aws_eip" "elastic_ip_for_instances" {
-  vpc 		= true
-  count 	= "${max(length(module.simple_ec2_cluster.id), 1)}"
-  instance 	= "${module.simple_ec2_cluster.id[count.index]}"
+# Configuration for 3 "worker" instance
+resource "aws_instance" "cluster_workers" {
+    ami             = "ami-4e79ed36"
+    instance_type   = "t2.micro"
+    key_name        = "david-IAM-keypair"
+    count           = 3
+
+    vpc_security_group_ids      = ["${module.open_all_sg.this_security_group_id}"]
+    subnet_id                   = "${module.sandbox_vpc.public_subnets[0]}"
+    associate_public_ip_address = true
+    
+    root_block_device {
+        volume_size = 100
+        volume_type = "standard"
+    }
+
+    tags {
+      Name        = "${var.cluster_name}-worker-${count.index}"
+      Owner       = "${var.fellow_name}"
+      Environment = "dev"
+      Terraform   = "true"
+    }
+
 }
-*/
+
+# Configuration for an Elastic IP to add to nodes
+resource "aws_eip" "elastic_ips_for_instances" {
+  vpc 	   	= true
+  instance  = "${element(concat(aws_instance.cluster_master.*.id, aws_instance.cluster_workers.*.id), count.index)}"
+  count     = "${aws_instance.cluster_master.count + aws_instance.cluster_workers.count}"
+}
