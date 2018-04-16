@@ -24,7 +24,7 @@ data "aws_availability_zones" "all" {}
 Configuration to make a very simple sandbox VPC for a few instances
 
 For more details and options on the AWS vpc module, visit:
-https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/1.9.1
+https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/1.30.0
 
  */
 module "sandbox_vpc" {
@@ -33,17 +33,12 @@ module "sandbox_vpc" {
 
   name = "${var.fellow_name}-vpc"
 
-  cidr = "10.0.0.0/26"
-
+  cidr             = "10.0.0.0/26"
   azs              = ["${data.aws_availability_zones.all.names}"]
   public_subnets   = ["10.0.0.0/28"]
-  private_subnets  = ["10.0.0.16/28"]
 
   enable_dns_support   = true
   enable_dns_hostnames = true
-
-  enable_nat_gateway = true
-  single_nat_gateway = true
 
   enable_s3_endpoint = true
 
@@ -68,12 +63,13 @@ https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/maste
 
  */
 module "open_all_sg" {
-  source = "terraform-aws-modules/security-group/aws"
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "1.9.0"
 
   name        = "open-to-all-sg"
   description = "Security group to make all ports publicly open...not secure at all"
-  vpc_id      = "${module.sandbox_vpc.vpc_id}"
-
+  
+  vpc_id                   = "${module.sandbox_vpc.vpc_id}"
   ingress_cidr_blocks      = ["10.0.0.0/26"]
   ingress_with_cidr_blocks = [
     {
@@ -94,28 +90,38 @@ module "open_all_sg" {
 Configuration for a simple EC2 cluster of 4 nodes, 
 within our VPC and with our open sg assigned to them
 
-For more details and options on the AWS EC2 module, visit:
-https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/1.5.0
+For all the arguments and options, visit:
+https://www.terraform.io/docs/providers/aws/r/instance.html
 
  */
-module "simple_ec2_cluster" {
-  source = "terraform-aws-modules/ec2-instance/aws"
+resource "aws_instance" "cluster_master" {
+    ami							= "ami-4e79ed36"
+    instance_type 	= "t2.micro"
+    key_name 				= "david-IAM-keypair"
+    count 					= 1
 
-  name           = "${var.fellow_name}"
-  instance_count = 4
+    vpc_security_group_ids 		  = ["${module.open_all_sg.this_security_group_id}"]
+    subnet_id 				        	= "${module.sandbox_vpc.public_subnets[0]}"
+    associate_public_ip_address = true
+    
+    root_block_device {
+        volume_size = 100
+        volume_type = "standard"
+    }
 
-  ami                    = "ami-4e79ed36"
-  instance_type          = "t2.micro"
-  key_name               = "david-IAM-keypair"
-  monitoring             = true
-  vpc_security_group_ids = ["${module.open_all_sg.this_security_group_id}"]
-  subnet_id              = "${module.sandbox_vpc.public_subnets[0]}"
-  
-  associate_public_ip_address = true
+    tags {
+      Name        = "${var.cluster_name}-master"
+      Owner       = "${var.fellow_name}"
+  	  Environment = "dev"
+    	Terraform   = "true"
+    }
 
-  tags = {
-    Owner       = "${var.fellow_name}"
-    Environment = "dev"
-    Terraform   = "true"
-  }
 }
+
+/*
+resource "aws_eip" "elastic_ip_for_instances" {
+  vpc 		= true
+  count 	= "${max(length(module.simple_ec2_cluster.id), 1)}"
+  instance 	= "${module.simple_ec2_cluster.id[count.index]}"
+}
+*/
