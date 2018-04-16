@@ -20,6 +20,14 @@ variable "fellow_name" {
   description = "The name that will be tagged on your resources."
 }
 
+variable "amis" {
+  type = "map"
+  default = {
+    "us-east-1" = "ami-43a15f3e"
+    "us-west-2" = "ami-4e79ed36"
+  }
+}
+
 variable "cluster_name" {
 	description = "The name for your instances in your cluster" 
 	default 	= "cluster"
