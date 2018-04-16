@@ -99,7 +99,7 @@ https://www.terraform.io/docs/providers/aws/r/instance.html
 resource "aws_instance" "cluster_master" {
     ami							= "ami-4e79ed36"
     instance_type 	= "t2.micro"
-    key_name 				= "david-IAM-keypair"
+    key_name 				= "${var.keypair_name}"
     count 					= 1
 
     vpc_security_group_ids 		  = ["${module.open_all_sg.this_security_group_id}"]
@@ -124,7 +124,7 @@ resource "aws_instance" "cluster_master" {
 resource "aws_instance" "cluster_workers" {
     ami             = "ami-4e79ed36"
     instance_type   = "t2.micro"
-    key_name        = "david-IAM-keypair"
+    key_name        = "${var.keypair_name}"
     count           = 3
 
     vpc_security_group_ids      = ["${module.open_all_sg.this_security_group_id}"]
