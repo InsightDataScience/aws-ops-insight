@@ -15,6 +15,9 @@ provider "aws" {
   version  = "~> 1.14"
 }
 
+# read the availability zones for the current region
+data "aws_availability_zones" "all" {}
+
 
 /* 
 
@@ -32,7 +35,7 @@ module "sandbox_vpc" {
 
   cidr = "10.0.0.0/26"
 
-  azs              = ["us-west-2a", "us-west-2b", "us-west-2c", "us-east-1a", "us-east-1b", "us-east-1c"]
+  azs              = ["${data.aws_availability_zones.all.names}"]
   public_subnets   = ["10.0.0.0/28"]
   private_subnets  = ["10.0.0.16/28"]
 
