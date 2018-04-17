@@ -70,7 +70,13 @@ Terraform will ask your name (enter whatever you want) and IAM keypair (enter th
 
 Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, without any issues. It's also smart about only changing what it absolutely needs to change. For example if you ran the apply command again, but use a different name, it will only rename a few resources rather than tearing down everything and spinning up more.
 
-If you ever want to tear down your infrastructure, you can always do that with the command:
+If all went well, you have the following resources added:
+
+- VPC sandbox with all the necessary networking
+- Security Group, with all ports open to and from any IP
+- 4 node cluster, with 1 "master" and 3 workers
+
+**Don't** destroy your infra now, but if you ever want to tear down your infrastructure, you can always do that with the command:
 
     terraform destroy
     
@@ -94,4 +100,28 @@ Finally, you can set variables in the file `terraform.tfvars`. Go into the file 
     keypair_name="david-IAM-keypair"
 
 For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD BE COMMITTED TO GITHUB**, so you can use environment variables for your credentials. For other types of variables, you should use the method that's most convenient (e.g. files are easy to share with others, but the command line could be easier when prototyping).
+
+# Configuring Technologies with Ansible
+
+With all our resources provisioned, we'll start configuring machines with the scripts in the `ansible` directory. Change to it with:
+
+    cd ../ansible
+
+In order for your control machine to SSH into your nodes via Ansible, it will need your PEM key stored on it. You can add it with a `scp` command like the following (**which should be ran from your local machine, not the control machine**):
+
+    scp -i ~/.ssh/control.pem ~/.ssh/david-IAM-keypair.pem david-d@ops.insightdata.com:~/.ssh/
+    
+or if you've set up your `.ssh/config` file as described above, it would be something like:
+
+    scp ~/.ssh/david-IAM-keypair.pem dd-control:~/.ssh/
+
+You'll also need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
+
+    [defaults]
+    host_key_checking = False
+    **ansible_ssh_private_key_file = ~/.ssh/david-IAM-keypair.pem**
+    ansible_user = ubuntu
+    log_path = ~/ansible.log
+    **roles_path = ~/aws-ops-insight/ansible/roles**
+    ....
 

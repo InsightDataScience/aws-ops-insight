@@ -116,6 +116,7 @@ resource "aws_instance" "cluster_master" {
       Owner       = "${var.fellow_name}"
   	  Environment = "dev"
     	Terraform   = "true"
+      ClusterRole = "master"
     }
 
 }
@@ -141,6 +142,7 @@ resource "aws_instance" "cluster_workers" {
       Owner       = "${var.fellow_name}"
       Environment = "dev"
       Terraform   = "true"
+      ClusterRole = "worker"
     }
 
 }
