@@ -23,8 +23,8 @@ variable "fellow_name" {
 variable "amis" {
   type = "map"
   default = {
-    "us-east-1" = "ami-43a15f3e"
-    "us-west-2" = "ami-4e79ed36"
+    "us-east-1" = "ami-0e32dc18"
+    "us-west-2" = "ami-62e01e02"
   }
 }
 
