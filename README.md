@@ -125,3 +125,8 @@ You'll also need to configure the `ansible.cfg` file to reflect your key pair na
     **roles_path = ~/aws-ops-insight/ansible/roles**
     ....
 
+Next, you should install the `boto` library 
+
+    pip install boto
+    
+    
