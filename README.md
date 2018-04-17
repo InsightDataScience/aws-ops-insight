@@ -6,16 +6,16 @@ Collection of Terraform and Ansible scripts for easy AWS operations
 ## Logging into the Control Machine
 Log into your user on the Controlling Machine provided by Insight, which you should be able to do with a command using the following command: 
 
-    ssh -i <path/to/your/pem.key> <first_name>-<last_initial>@54.69.222.167
+    ssh -i <path/to/your/pem.key> <first_name>-<last_initial>@ops.insightdata.com
     
 For example, assuming your PEM key is in your `.ssh` directory, you can log in with:
 
-    ssh -i ~/.ssh/control.pem david-d@54.69.222.167
+    ssh -i ~/.ssh/control.pem david-d@ops.insightdata.com
 
 Alternatively, I added the following to my `.ssh/config`:
 
     Host dd-contol
-        HostName 54.69.222.167
+        HostName ops.insightdata.com
         User david-d
         Port 22
         IdentityFile ~/.ssh/control.pem
@@ -51,31 +51,22 @@ In past sessions, someone gets hacked and Bitcoin miners go crazy burning throug
 
 AWS uses software-defined network to offer a small network that is secure from others called a Virtual Private Cloud (VPC). We'll use Terraform to set up a simple and small "sandbox VPC" where you can build your infrastructure safely.
 
-Move into the `terraform/networking` directory of the repo you cloned:
+Move into the `terraform` directory of the repo you cloned:
 
-    cd terraform/networking
+    cd aws-ops-insight/terraform
     
 Then initialize Terraform and apply the configuration we've set up in the `.tf` files within that directory:
 
     terraform init
     terraform apply
     
-Terraform will ask your name (enter whatever you want), show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments (the NAT gateways can take a minute or two), you should see a successful message like this: 
+Terraform will ask your name (enter whatever you want) and IAM keypair (enter the exact name of your key, **without the `.pem` extension**). Then it will show you it's plan to create, modify, or destroy resources to get to the correct configuration you specified. After saying `yes` to the prompt, and waiting a few moments (the NAT gateways can take a minute or two), you should see a successful message like this: 
 
-    Apply complete! Resources: 15 added, 0 changed, 0 destroyed.
+    Apply complete! Resources: 18 added, 0 changed, 0 destroyed.
 
     Outputs:
 
-    nat_public_ips = [
-        52.36.7.200
-    ]
-    private_subnets = [
-        subnet-69f74f10
-    ]
-    public_subnets = [
-        subnet-b2f44ccb
-    ]
-    vpc_id = vpc-3e4d1047
+    cluster_size = 4
 
 Terraform is designed to be idempotent, so you can always run the `terraform apply` command multiple times, without any issues. It's also smart about only changing what it absolutely needs to change. For example if you ran the apply command again, but use a different name, it will only rename a few resources rather than tearing down everything and spinning up more.
 
@@ -94,9 +85,13 @@ or by setting an environment variable that starts with `TF_VAR_` like:
     
 (but don't forget to source your `.profile`). Note that Terraform treats your AWS credentials specially - they don't need the `TF_VAR` prefix to be detected.
 
-Finally, you can set variables in the file `terraform.tfvars`. Go into the file and add the following to the bottom (but use your name of course):
+Finally, you can set variables in the file `terraform.tfvars`. Go into the file and uncomment the lines with variables (but use your name and key pair, of course):
 
+    # name of the Fellow (swap for your name)
     fellow_name="david"
 
-For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD BE COMMITTED TO GITHUB**, so it's best to use environment variables for your credentials. For other types of variables, you should use the method that's most convenient (e.g. files are easy to share with others, but commandline is easier to automate).
+    # name of your key pair (already created in AWS)
+    keypair_name="david-IAM-keypair"
+
+For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD BE COMMITTED TO GITHUB**, so you can use environment variables for your credentials. For other types of variables, you should use the method that's most convenient (e.g. files are easy to share with others, but the command line could be easier when prototyping).
 
