@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Get spark master IP
+    ec2_instance_facts:
+      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      region: us-west-2
+      filters:
+        instance-state-name: running
+        "tag:ClusterRole": master
+    register: ec2_facts
+  - name: print ec2 facts
+    debug: 
+      var: ec2_facts
