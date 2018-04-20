@@ -4,9 +4,13 @@ Collection of Terraform and Ansible scripts for easy AWS operations
 # Set up your Linux User on the Shared Control Machine
 
 ## Logging into the Control Machine
-Log into your user on the Controlling Machine provided by Insight, which you should be able to do with a command using the following command: 
+First make sure the `control.pem` has the proper permissions with:
 
-    ssh -i <path/to/your/pem.key> <first_name>-<last_initial>@ops.insightdata.com
+    chmod 400 <path/to/your/pem.key>
+
+Next log into your user on the Controlling Machine provided by Insight, which you should be able to do with a command using the following command: 
+
+    ssh -i <path/to/your/pem.key> <lowercase_first_name>-<lowercase_last_initial>@ops.insightdata.com
     
 For example, assuming your PEM key is in your `.ssh` directory, you can log in with:
 
@@ -14,7 +18,7 @@ For example, assuming your PEM key is in your `.ssh` directory, you can log in w
 
 Alternatively, I added the following to my `.ssh/config`:
 
-    Host dd-contol
+    Host dd-control
         HostName ops.insightdata.com
         User david-d
         Port 22

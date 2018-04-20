@@ -97,13 +97,13 @@ https://www.terraform.io/docs/providers/aws/r/instance.html
 
 # Configuration for a "master" instance
 resource "aws_instance" "cluster_master" {
-    ami							= "${lookup(var.amis, var.aws_region)}"
-    instance_type 	= "t2.micro"
-    key_name 				= "${var.keypair_name}"
-    count 					= 1
+    ami             = "${lookup(var.amis, var.aws_region)}"
+    instance_type   = "t2.micro"
+    key_name        = "${var.keypair_name}"
+    count           = 1
 
-    vpc_security_group_ids 		  = ["${module.open_all_sg.this_security_group_id}"]
-    subnet_id 				        	= "${module.sandbox_vpc.public_subnets[0]}"
+    vpc_security_group_ids      = ["${module.open_all_sg.this_security_group_id}"]
+    subnet_id                   = "${module.sandbox_vpc.public_subnets[0]}"
     associate_public_ip_address = true
     
     root_block_device {
@@ -114,8 +114,8 @@ resource "aws_instance" "cluster_master" {
     tags {
       Name        = "${var.cluster_name}-master-${count.index}"
       Owner       = "${var.fellow_name}"
-  	  Environment = "dev"
-    	Terraform   = "true"
+      Environment = "dev"
+      Terraform   = "true"
       ClusterRole = "master"
     }
 
@@ -149,7 +149,7 @@ resource "aws_instance" "cluster_workers" {
 
 # Configuration for an Elastic IP to add to nodes
 resource "aws_eip" "elastic_ips_for_instances" {
-  vpc 	   	= true
+  vpc       = true
   instance  = "${element(concat(aws_instance.cluster_master.*.id, aws_instance.cluster_workers.*.id), count.index)}"
   count     = "${aws_instance.cluster_master.count + aws_instance.cluster_workers.count}"
 }
