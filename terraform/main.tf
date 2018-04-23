@@ -77,6 +77,14 @@ module "open_all_sg" {
       cidr_blocks = "0.0.0.0/0"
     }
   ]
+ 
+  egress_cidr_blocks = ["10.10.0.0/26"]
+  egress_with_cidr_blocks = [
+    {
+      rule        = "all-all"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
 
   tags = {
     Owner       = "${var.fellow_name}"
