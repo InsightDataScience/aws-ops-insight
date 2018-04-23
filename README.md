@@ -2,9 +2,10 @@
 Collection of Terraform and Ansible scripts for easy AWS operations
 
 # Set up your Linux User on the Shared Control Machine
+The entire setup will be done from the Control machine, which you can log into with a Linux user that has been created for you already. Before you can start setting up AWS, you need to log into the control machine:
 
 ## Logging into the Control Machine
-First make sure the `control.pem` has the proper permissions with:
+On your local machine, download the `control.pem` key from Mattermost, and make sure the `control.pem` has the proper permissions with:
 
     chmod 400 <path/to/your/pem.key>
 
@@ -14,9 +15,9 @@ Next log into your user on the Controlling Machine provided by Insight, which yo
     
 For example, assuming your PEM key is in your `.ssh` directory, you can log in with:
 
-    ssh -i ~/.ssh/control.pem david-d@ops.insightdata.com
+    ssh -i ~/.ssh/control.pem **david-d**@ops.insightdata.com
 
-Alternatively, I added the following to my `.ssh/config`:
+Alternatively, use `nano ~/.ssh/config` or `vim ~/.ssh/config` to add the following to my local machine's `.ssh/config`:
 
     Host dd-control
         HostName ops.insightdata.com
@@ -24,9 +25,11 @@ Alternatively, I added the following to my `.ssh/config`:
         Port 22
         IdentityFile ~/.ssh/control.pem
         
-and then log in using the command `ssh dd-control` for my convenience.
+and then log in using the command `ssh dd-control` for my convenience. 
 
-## Clone this repo
+**The remainder of the commands in the setup are all done from the control machine. **
+
+## Clone this repo onto the control machine
 
 This machine is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup. However, you still need to download the latest scripts from this repo:
 
@@ -40,7 +43,7 @@ Your Linux user has a `.profile` file in your home directory where you can confi
 
 **WARNING: DO NOT COMMIT YOUR AWS CREDENTIALS TO GITHUB!** AWS and bots are constantly searching Github for these credentials, and you will either have your account hacked, or your credentials revoked by AWS.
 
-Whenever you change your `.profile`, don't forget to source it with the command:
+Whenever you change your `.profile`, don't forget to source it with the command (note the `.` at the beginning of the command):
 
     . ~/.profile
     
