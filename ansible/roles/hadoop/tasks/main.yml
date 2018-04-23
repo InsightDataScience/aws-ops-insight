@@ -1,0 +1,27 @@
+# Ansible playbook for gathering current EC2 facts from AWS
+# using the ec2_instance_facts module
+---
+- hosts: localhost
+  tasks:
+  - name: Gather hadoop master's facts
+    ec2_instance_facts:
+      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      region: "{{ lookup('env', 'AWS_REGION') }}"  
+      filters:
+        instance-state-name: running
+        "tag:Cluster": hadoop
+        "tag:ClusterRole": master
+    register: ec2_master_facts
+  - name: Gather hadoop workers' facts
+    ec2_instance_facts:
+      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      region: "{{ lookup('env', 'AWS_REGION') }}"
+      filters:
+        instance-state-name: running
+        "tag:Cluster": hadoop
+        "tag:ClusterRole": worker
+    register: ec2_worker_facts  
+  - add_host: hostname={{ item.public_ip_address }} groups=hadoop,hadoop_master
+    with_items: ec2_master_facts.instances

@@ -12,6 +12,9 @@
         instance-state-name: running
         "tag:Cluster": hadoop
     register: ec2_cluster_facts
-  - name: print hadoop facts
+  - name: print cluster facts
     debug: 
       var: ec2_cluster_facts
+  - name: print first instance's public ip address
+    debug:
+      var: ec2_cluster_facts['instances'][0]['public_ip_address']
