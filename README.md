@@ -15,7 +15,7 @@ Next log into your user on the Controlling Machine provided by Insight, which yo
     
 For example, assuming your PEM key is in your `.ssh` directory, you can log in with:
 
-    ssh -i ~/.ssh/control.pem **david-d**@ops.insightdata.com
+    ssh -i ~/.ssh/control.pem david-d@ops.insightdata.com
 
 Alternatively, use `nano ~/.ssh/config` or `vim ~/.ssh/config` to add the following to my local machine's `.ssh/config`:
 
@@ -35,8 +35,8 @@ This machine is pre-installed with Terraform and Ansible, and is designed to all
 
     git clone https://github.com/InsightDataScience/aws-ops-insight.git
 
-## AWS credentials for your personal user
-Your Linux user has a `.profile` file in your home directory where you can configure your control machine. Add your AWS credentials to your `.profile` using your editor of choice (e.g. with a command like `nano ~/.profile` or `vim ~/.profile`). Of course, your credentials will be different, but you should have something like this in your `.profile`:
+## AWS credentials for your IAM user (not the root account)
+Your Linux user has a `.profile` file in your home directory where you can configure your control machine. Add the AWS credentials for your IAM user to your `.profile` using your editor of choice (e.g. with a command like `nano ~/.profile` or `vim ~/.profile`). Of course, your credentials will be different, but you should have something like this in your `.profile`:
 
     export AWS_ACCESS_KEY_ID=ABCDE1F2G3HIJKLMNOP  
     export AWS_SECRET_ACCESS_KEY=1abc2d34e/f5ghJKlmnopqSr678stUV/WXYZa12
@@ -49,7 +49,7 @@ Whenever you change your `.profile`, don't forget to source it with the command 
     
 # Setting up your AWS Environment
 
-We'll start by using Terraform to "provision" resources on your AWS account. Terraform is an industry-standard open source technology for Provisioning hardware, whether on any popular cloud provider (e.g. AWS, GCP), or in-house data centers. Terraform is written in Go, and is designed to quickly and easily create and destroy infrastructure of hundreds of resources in parallel. 
+We'll start by using Terraform to "provision" resources on your AWS account. Terraform is an industry-standard open source technology for provisioning hardware, whether on any popular cloud provider (e.g. AWS, GCP), or in-house data centers. Terraform is written in Go, and is designed to quickly and easily create and destroy infrastructure of hundreds of resources in parallel. 
 
 Terraform also has a great community of open source modules available in the [Terraform Registry](https://registry.terraform.io/). We'll be using several of the pre-built AWS modules now.
 
@@ -58,7 +58,7 @@ In past sessions, someone gets hacked and Bitcoin miners go crazy burning throug
 
 AWS uses software-defined network to offer a small network that is secure from others called a Virtual Private Cloud (VPC). We'll use Terraform to set up a simple and small "sandbox VPC" where you can build your infrastructure safely.
 
-Move into the `terraform` directory of the repo you cloned:
+Move into the `terraform` directory of the repo you just cloned:
 
     cd aws-ops-insight/terraform
     
@@ -81,7 +81,7 @@ If all went well, you have the following resources added:
 
 - VPC sandbox with all the necessary networking
 - Security Group, with all ports open to and from any IP
-- 4 node cluster, with 1 "master" and 3 workers
+- 4 node cluster, with 1 "master" and 3 "workers"
 
 **Don't** destroy your infra now, but if you ever want to tear down your infrastructure, you can always do that with the command:
 
@@ -96,7 +96,7 @@ or by setting an environment variable that starts with `TF_VAR_` like:
 
     export TF_VAR_fellow_name=david
     
-(but don't forget to source your `.profile`). Note that Terraform treats your AWS credentials specially - they don't need the `TF_VAR` prefix to be detected.
+(but don't forget to source your `.profile` again). Note that Terraform treats your AWS credentials specially - they don't need the `TF_VAR` prefix to be detected.
 
 Finally, you can set variables in the file `terraform.tfvars`. Go into the file and uncomment the lines with variables (but use your name and key pair, of course):
 
@@ -118,22 +118,22 @@ In order for your control machine to SSH into your nodes via Ansible, it will ne
 
     scp -i ~/.ssh/control.pem ~/.ssh/david-IAM-keypair.pem david-d@ops.insightdata.com:~/.ssh/
     
-or if you've set up your `.ssh/config` file as described above, it would be something like:
+or if you've set up your `.ssh/config` file as described above, it would be something like (but with **your name and key**):
 
     scp ~/.ssh/david-IAM-keypair.pem dd-control:~/.ssh/
 
-You'll also need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
+Back on the control machine, you'll also need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
 
     [defaults]
     host_key_checking = False
-    **ansible_ssh_private_key_file = ~/.ssh/david-IAM-keypair.pem**
-    ansible_user = ubuntu
+    private_key_file = /home/david-d/.ssh/david-IAM-keypair.pem
+    ansible_user = david-d
     log_path = ~/ansible.log
-    **roles_path = ~/aws-ops-insight/ansible/roles**
+    roles_path = ~/aws-ops-insight/ansible/roles
     ....
 
-Next, you should install the `boto` library 
+Next, install the AWS Software Development Kit (SDK) for Python, which is called `boto`. Ansible is written in Python, so this is how Ansible connects with AWS. Unfortunately, Ansible is in the middle of migrating from Python 2 to Python 3, so you'll need both the `boto` and `boto3` libraries to use all the modules.
 
-    pip install boto
+    pip install boto boto3
     
     
