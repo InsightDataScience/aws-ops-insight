@@ -101,6 +101,8 @@ within our VPC and with our open sg assigned to them
 For all the arguments and options, visit:
 https://www.terraform.io/docs/providers/aws/r/instance.html
 
+Note: You don't need the below resources for using the Pegasus tool
+  
  */
 
 # Configuration for a "master" instance
