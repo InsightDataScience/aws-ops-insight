@@ -111,6 +111,7 @@ For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD B
 
 # Configuring Technologies with Ansible
 
+## Setup Ansible to connect with AWS
 With all our resources provisioned, we'll now use the "configuration management" tool, Ansible, to actually install and start technologies like Hadoop, Spark, etc. Ansible is also open source and popular at many startups for it's ease of use, though many larger companies use alternative tools like Puppet and Chef. 
 
 We'll start configuring machines with the scripts in the `ansible` directory. Change to it with:
@@ -152,3 +153,14 @@ The `ec2.ini` is simply some initializations that we're using. For example, it i
 To use this, make sure that the `ec2.py` script has permission to execute (e.g. `+x`) with the `chmod` command:
 
     chmod +x ec2.py
+
+Finally, you can test this by running the Ansible playbook `get-cluster-list.yml`:
+
+    ansible-playbook get-cluster-list.yml
+    
+which should display the "facts" for any instances in AWS with the tag `Cluster` set to `hadoop` **(if you don't have this tag set by Terraform, go back and add it to `main.tf`, apply it now, and re-run the playbook)**. There should be a lot of information displayed with a summary at the end like:
+
+    PLAY RECAP ****************************************************************
+    localhost                  : ok=3    changed=0    unreachable=0    failed=0
+
+  
