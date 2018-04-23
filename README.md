@@ -29,10 +29,11 @@ and then log in using the command `ssh dd-control` for my convenience.
 
 **The remainder of the commands in the setup are all done from the control machine. **
 
-## Clone this repo onto the control machine
+## Clone this repo into the home directory on the control machine
 
-This machine is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup. However, you still need to download the latest scripts from this repo:
-
+This machine is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup. However, you still need to change to the home directory (abbreviated `~` in bash) and download the latest scripts from this repo:
+    
+    cd ~
     git clone https://github.com/InsightDataScience/aws-ops-insight.git
 
 ## AWS credentials for your IAM user (not the root account)
@@ -110,7 +111,9 @@ For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD B
 
 # Configuring Technologies with Ansible
 
-With all our resources provisioned, we'll start configuring machines with the scripts in the `ansible` directory. Change to it with:
+With all our resources provisioned, we'll now use the "configuration management" tool, Ansible, to actually install and start technologies like Hadoop, Spark, etc. Ansible is also open source and popular at many startups for it's ease of use, though many larger companies use alternative tools like Puppet and Chef. 
+
+We'll start configuring machines with the scripts in the `ansible` directory. Change to it with:
 
     cd ../ansible
 
@@ -122,7 +125,7 @@ or if you've set up your `.ssh/config` file as described above, it would be some
 
     scp ~/.ssh/david-IAM-keypair.pem dd-control:~/.ssh/
 
-Back on the control machine, you'll also need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
+Back on the control machine, you'll also need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This sets global configuration This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
 
     [defaults]
     host_key_checking = False
@@ -136,4 +139,16 @@ Next, install the AWS Software Development Kit (SDK) for Python, which is called
 
     pip install boto boto3
     
-    
+Next, add the following additonal environment variables to your control machine's `.profile` for Ansible:
+
+    export AWS_REGION=us-west-2
+    export EC2_INI_PATH=~/aws-ops-insight/ansible/ec2.ini
+    export ANSIBLE_INVENTORY=~/aws-ops-insight/ansible/ec2.py
+
+The first sets the region to Oregon (**you should set your region to `us-east-1` if you're on the East coast**). The other  two lines are necessary to initialize and use Ansible's "Dynamic Inventory" feature. Ansible keeps an "inventory" of the host machines you're installing technologies onto, and the `ec2.py` script collects this information dynamically. This is how Ansible knows about the instances that Terraform just launched.
+
+The `ec2.ini` is simply some initializations that we're using. For example, it ignores regions and services that most Fellows don't use (e.g. the Beijing data cente `cn-north-1`, or the AWS DNS service, Route53).
+
+To use this, make sure that the `ec2.py` script has permission to execute (e.g. `+x`) with the `chmod` command:
+
+    chmod +x ec2.py
