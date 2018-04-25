@@ -124,7 +124,7 @@ We'll start configuring machines with the scripts in the `ansible` directory. Ch
 
 In order for your control machine to SSH into your nodes via Ansible, it will need your PEM key stored on it. You can add it with a `scp` command like the following (**which should be ran from your local machine, not the control machine**):
 
-    scp -i ~/.ssh/control.pem ~/.ssh/david-IAM-keypair.pem david-d@ops.insightdata.com:~/.ssh/
+    scp -i ~/.ssh/control.pem ~/.ssh/david-IAM-keypair.pem david-d@bos.insightdata.com:~/.ssh/
     
 or if you've set up your `.ssh/config` file as described above, it would be something like (but with **your name and key**):
 
