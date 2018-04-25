@@ -84,10 +84,14 @@ If all went well, you have the following resources added:
 - Security Group, with all ports open to and from any IP
 - 4 node cluster, with 1 "master" and 3 "workers"
 
+### Destroying your infrastructure
+
 **Don't** destroy your infra now, but if you ever want to tear down your infrastructure, you can always do that with the command:
 
     terraform destroy
-    
+
+If you want to destroy a subset of your infrastructure, simply change you `main.tf` file accordingly and re-run the `tf apply` to apply these changes. Terraform tracks the current state in the `terraform.tfstate` file (or a remote backend like S3 or Consul), but if you manually delete resources on the console, this can mess up your Terraform state. As a result, **we don't recommend mixing a Terraform and manual setup** - try to do everything within Terraform if possible.
+
 ### Setting Terraform Variables
 You probably don't want to enter your name everytime you run the apply command (and you can't automate that), so let's set the variable. You could set the variable from the command line with something like:
 
