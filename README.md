@@ -9,25 +9,25 @@ On your local machine, download the `control.pem` key from Mattermost, and make 
 
     chmod 400 <path/to/your/pem.key>
 
-Next log into your user on the Controlling Machine provided by Insight, which you should be able to do with a command using the following command: 
+Next log into your user on the Control Machine provided by Insight, which you should be able to do with a command using the following command: 
 
-    ssh -i <path/to/your/pem.key> <lowercase_first_name>-<lowercase_last_initial>@ops.insightdata.com
+    ssh -i <path/to/your/pem.key> <lowercase_first_name>-<lowercase_last_initial>@<location>.insightdata.com
     
-For example, assuming your PEM key is in your `.ssh` directory, you can log in with:
+Where location is either `bos`, `ny`, or `sv` depending on your location. For example, assuming your PEM key is in your `.ssh` directory, you can log into the Boston control machine with:
 
-    ssh -i ~/.ssh/control.pem david-d@ops.insightdata.com
+    ssh -i ~/.ssh/control.pem david-d@bos.insightdata.com
 
 Alternatively, use `nano ~/.ssh/config` or `vim ~/.ssh/config` to add the following to my local machine's `.ssh/config`:
 
     Host dd-control
-        HostName ops.insightdata.com
+        HostName bos.insightdata.com
         User david-d
         Port 22
         IdentityFile ~/.ssh/control.pem
         
 and then log in using the command `ssh dd-control` for my convenience. 
 
-**The remainder of the commands in the setup are all done from the control machine. **
+**The remainder of the commands in the setup are all done from the control machine.**
 
 ## Clone this repo into the home directory on the control machine
 
