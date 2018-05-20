@@ -1,27 +1,19 @@
-# Ansible playbook for gathering current EC2 facts from AWS
+# Ansible playbook for setting up passwordless ssh
 # using the ec2_instance_facts module
----
-- hosts: localhost
-  tasks:
-  - name: Gather hadoop master's facts
-    ec2_instance_facts:
-      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-      region: "{{ lookup('env', 'AWS_REGION') }}"  
-      filters:
-        instance-state-name: running
-        "tag:Cluster": hadoop
-        "tag:ClusterRole": master
-    register: ec2_master_facts
-  - name: Gather hadoop workers' facts
-    ec2_instance_facts:
-      aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-      aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-      region: "{{ lookup('env', 'AWS_REGION') }}"
-      filters:
-        instance-state-name: running
-        "tag:Cluster": hadoop
-        "tag:ClusterRole": worker
-    register: ec2_worker_facts  
-  - add_host: hostname={{ item.public_ip_address }} groups=hadoop,hadoop_master
-    with_items: ec2_master_facts.instances
+
+- name: Generate passphrase-less SSH key pair
+  user:
+    name: ubuntu
+    generate_ssh_key: yes
+    ssh_key_file: .ssh/hadoop_rsa
+
+- name: Slurp and register public key file
+  slurp:
+    src: .ssh/hadoop_rsa.pub
+  register: hadoop_pub_file
+
+- name: Add passphrase-less public key to authorized_keys
+  authorized_key:
+    user: ubuntu
+    state: present
+    key: "{{ hadoop_pub_file['content'] | b64decode }}"
