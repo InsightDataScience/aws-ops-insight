@@ -78,6 +78,3 @@ install_tech() {
 install_tech maven apache-maven-${MAVEN_VER} tar.gz
 install_tech hadoop hadoop-${HADOOP_VER} tar.gz
 install_tech spark spark-${SPARK_VER}-bin-hadoop${SPARK_HADOOP_VER} tgz
-	
-# Download and install Airflow
-sudo pip install apache-airflow

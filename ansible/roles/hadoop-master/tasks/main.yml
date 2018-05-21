@@ -1,19 +1,16 @@
 # Ansible playbook for setting up passwordless ssh
 # using the ec2_instance_facts module
 
+
 - name: Generate passphrase-less SSH key pair
   user:
     name: ubuntu
     generate_ssh_key: yes
     ssh_key_file: .ssh/hadoop_rsa
 
-- name: Slurp and register public key file
+- name: Slurp and register the 
   slurp:
-    src: .ssh/hadoop_rsa.pub
+    src: /home/ubuntu/.ssh/hadoop_rsa.pub
   register: hadoop_pub_file
 
-- name: Add passphrase-less public key to authorized_keys
-  authorized_key:
-    user: ubuntu
-    state: present
-    key: "{{ hadoop_pub_file['content'] | b64decode }}"
+

@@ -108,7 +108,7 @@ Note: You don't need the below resources for using the Pegasus tool
 # Configuration for a "master" instance
 resource "aws_instance" "cluster_master" {
     ami             = "${lookup(var.amis, var.aws_region)}"
-    instance_type   = "t2.micro"
+    instance_type   = "m4.large"
     key_name        = "${var.keypair_name}"
     count           = 1
 
@@ -126,16 +126,15 @@ resource "aws_instance" "cluster_master" {
       Owner       = "${var.fellow_name}"
       Environment = "dev"
       Terraform   = "true"
-      Cluster     = "hadoop"
-      ClusterRole = "master"
+      HadoopRole  = "master"
     }
 
 }
 
-# Configuration for 3 "worker" instance
+# Configuration for 3 "worker" elastic_ips_for_instances
 resource "aws_instance" "cluster_workers" {
     ami             = "${lookup(var.amis, var.aws_region)}"
-    instance_type   = "t2.micro"
+    instance_type   = "m4.large"
     key_name        = "${var.keypair_name}"
     count           = 3
 
@@ -153,8 +152,7 @@ resource "aws_instance" "cluster_workers" {
       Owner       = "${var.fellow_name}"
       Environment = "dev"
       Terraform   = "true"
-      Cluster     = "hadoop"
-      ClusterRole = "worker"
+      HadoopRole  = "worker"
     }
 
 }

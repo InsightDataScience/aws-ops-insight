@@ -1,6 +1,19 @@
 # Ansible script for 
 
 ---
+- hosts: localhost
+  tasks: 
+  - name: Generate passphrase-less SSH key pair on control machine
+    user:
+      name: david-d
+      generate_ssh_key: yes
+      ssh_key_file: .ssh/hadoop_rsa
+
 - hosts: tag_HadoopRole_master
   roles: 
-    - hadoop 
+    - hadoop-master
+    - hadoop-all
+
+- hosts: tag_HadoopRole_worker
+  roles: 
+    - hadoop-all
