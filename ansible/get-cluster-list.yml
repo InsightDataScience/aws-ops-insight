@@ -1,8 +1,0 @@
-# Ansible playbook for gathering current EC2 facts from AWS
-# using the ec2_instance_facts module
----
-- hosts: tag_Cluster_hadoop
-  tasks:
-  - name: print cluster facts
-    debug: 
-      var: ec2_ip_address 

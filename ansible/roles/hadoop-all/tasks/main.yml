@@ -1,8 +1,11 @@
 # Ansible playbook for setting up passwordless ssh
-# using the ec2_instance_facts module
 
-- name: Add local passphrase-less public key to authorized_keys on hadoop worker
+# - name: Print all variables for each remote device
+#   debug: 
+#         var: hostvars[groups['tag_HadoopRole_master'][0]]['hadoop_pub_key']['content']
+
+- name: Add passphrase-less public key to authorized_keys on hadoop nodes
   authorized_key:
     user: ubuntu
     state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/hadoop_rsa.pub') }}"
+    key: "{{ hostvars[groups['tag_HadoopRole_master'][0]]['hadoop_pub_key']['content'] | b64decode }}"

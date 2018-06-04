@@ -127,6 +127,7 @@ resource "aws_instance" "cluster_master" {
       Environment = "dev"
       Terraform   = "true"
       HadoopRole  = "master"
+      SparkRole  = "master"
     }
 
 }
@@ -153,6 +154,7 @@ resource "aws_instance" "cluster_workers" {
       Environment = "dev"
       Terraform   = "true"
       HadoopRole  = "worker"
+      SparkRole  = "worker"
     }
 
 }

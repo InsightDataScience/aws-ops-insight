@@ -10,7 +10,7 @@ SCALA_VER=2.11.12
 MAVEN_VER=3.5.3
 
 HADOOP_VER=2.7.6
-SPARK_VER=2.2.1
+SPARK_VER=2.3.0
 SPARK_HADOOP_VER=2.7
 
 # Setup a download and installation directory
@@ -20,7 +20,7 @@ DOWNLOADS_DIR=~/Downloads
 
 # Update package manager and get some useful packages
 sudo apt-get update -y
-sudo apt-get upgrade -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq
 sudo apt-get update -y
 sudo apt-get install -y tree
 sudo apt-get install -y unzip

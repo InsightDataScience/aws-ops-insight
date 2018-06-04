@@ -1,16 +1,37 @@
 # Ansible playbook for setting up passwordless ssh
 # using the ec2_instance_facts module
 
-
-- name: Generate passphrase-less SSH key pair
+- name: Generate passphrase-less SSH key pair on master
   user:
     name: ubuntu
     generate_ssh_key: yes
-    ssh_key_file: .ssh/hadoop_rsa
+    ssh_key_file: .ssh/id_rsa
 
-- name: Slurp and register the 
+# register the public key contents so they can be added to the authorized keys
+- name: Slurp and register the public key file so it can be used by ansible
   slurp:
-    src: /home/ubuntu/.ssh/hadoop_rsa.pub
-  register: hadoop_pub_file
+    src: /home/ubuntu/.ssh/id_rsa.pub
+  register: hadoop_pub_key 
 
+# the following plays add the hosts in the cluster to the known hosts file on the master
+- name: Ensure the known_hosts file is created with proper permissions
+  file:
+    path: /home/ubuntu/.ssh/known_hosts
+    owner: ubuntu
+    group: ubuntu
+    state: touch
 
+- name: Register ssh-keyscan results for all nodes in the cluster to add to known_hosts
+  shell: "ssh-keyscan -t ecdsa {{ item }}"
+  with_items: 
+    - "localhost"
+    - "{{ groups['tag_HadoopRole_master'] }}"
+    - "{{ groups['tag_HadoopRole_worker'] }}"
+  register: ssh_known_host_results
+
+- name: Add/update the public key
+  known_hosts:
+    name: "{{ item.item }}"
+    key: "{{ item.stdout }}"
+    path: /home/ubuntu/.ssh/known_hosts
+  with_items: "{{ ssh_known_host_results.results }}"
