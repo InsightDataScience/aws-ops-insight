@@ -10,7 +10,7 @@ SCALA_VER=2.11.12
 MAVEN_VER=3.5.3
 
 HADOOP_VER=2.7.6
-SPARK_VER=2.3.0
+SPARK_VER=2.3.1
 SPARK_HADOOP_VER=2.7
 
 # Setup a download and installation directory
