@@ -1,11 +1,35 @@
 # Ansible playbook for setting up passwordless ssh
 
-# - name: Print all variables for each remote device
+# - name: Print variables for master node
 #   debug: 
-#         var: hostvars[groups['tag_HadoopRole_master'][0]]['hadoop_pub_key']['content']
+#     var: hostvars[groups['tag_HadoopRole_master'][0]]
 
 - name: Add passphrase-less public key to authorized_keys on hadoop nodes
   authorized_key:
     user: ubuntu
     state: present
     key: "{{ hostvars[groups['tag_HadoopRole_master'][0]]['hadoop_pub_key']['content'] | b64decode }}"
+
+- name: Copy over and configure core-site.xml on all nodes
+  template: 
+    src: core-site.xml.j2
+    dest: /usr/local/hadoop/etc/hadoop/core-site.xml
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+- name: Copy over and configure yarn-site.xml on all nodes
+  template: 
+    src: yarn-site.xml.j2
+    dest: /usr/local/hadoop/etc/hadoop/yarn-site.xml
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+- name: Copy over and configure mapred-site.xml on all nodes
+  template: 
+    src: mapred-site.xml.j2
+    dest: /usr/local/hadoop/etc/hadoop/mapred-site.xml
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
