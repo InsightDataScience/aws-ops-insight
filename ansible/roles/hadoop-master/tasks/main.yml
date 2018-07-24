@@ -35,3 +35,8 @@
     key: "{{ item.stdout }}"
     path: /home/ubuntu/.ssh/known_hosts
   with_items: "{{ ssh_known_host_results.results }}"
+
+- name: Add namenode and datanode mappings to /etc/hosts
+  debug:
+    var: "{{ item }}"
+    loop: "{{ query('ec2_public_dns_name', 'all') }}"
