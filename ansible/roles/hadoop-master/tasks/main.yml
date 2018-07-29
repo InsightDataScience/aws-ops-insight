@@ -1,4 +1,4 @@
-# Ansible playbook for setting up passwordless ssh
+# Ansible playbook for setting up a Hadoop master
 # using the ec2_instance_facts module
 
 - name: Generate passphrase-less SSH key pair on master
@@ -69,3 +69,18 @@
     owner: ubuntu
     group: ubuntu
 
+- name: Copy over and configure masters on the name node
+  template: 
+    src: masters.j2
+    dest: /usr/local/hadoop/etc/hadoop/masters
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+- name: Copy over and configure the slaves file on the name node
+  template: 
+    src: slaves.j2
+    dest: /usr/local/hadoop/etc/hadoop/slaves
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644

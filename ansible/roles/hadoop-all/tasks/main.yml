@@ -1,8 +1,5 @@
-# Ansible playbook for setting up passwordless ssh
-
-# - name: Print variables for master node
-#   debug: 
-#     var: hostvars[groups['tag_HadoopRole_master'][0]]
+# Ansible playbook for setting up any hadoop node
+# using the ec2_instance_facts module
 
 - name: Add passphrase-less public key to authorized_keys on hadoop nodes
   authorized_key:

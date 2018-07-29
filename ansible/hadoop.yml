@@ -1,4 +1,4 @@
-# Ansible script for 
+# Ansible script for configuring and starting a Hadoop cluster
 
 ---
 - hosts: tag_HadoopRole_master
@@ -9,3 +9,4 @@
 - hosts: tag_HadoopRole_worker
   roles: 
     - hadoop-all
+    - hadoop-worker

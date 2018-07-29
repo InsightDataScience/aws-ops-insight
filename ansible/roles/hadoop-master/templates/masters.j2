@@ -1,0 +1,4 @@
+{% for host in groups['tag_HadoopRole_master'] %}
+{{ hostvars[host]['ec2_private_dns_name'].split('.')[0] }}
+{% endfor %}
+

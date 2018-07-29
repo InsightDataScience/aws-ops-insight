@@ -1,0 +1,17 @@
+# Ansible playbook for setting up a Hadoop master
+# using the ec2_instance_facts module
+
+- name: Copy over and configure hdfs-site.xml on the data nodes
+  template: 
+    src: hdfs-site.xml.j2
+    dest: /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+- name: Create directory for the metadata on the data nodes
+  file:
+    path: /usr/local/hadoop/hadoop_data/hdfs/datanode
+    state: directory
+    owner: ubuntu
+    group: ubuntu
