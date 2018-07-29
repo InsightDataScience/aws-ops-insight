@@ -1,0 +1,10 @@
+# Ansible script for 
+
+---
+- hosts: tag_HadoopRole_master
+  roles: 
+    - master
+
+# - hosts: tag_HadoopRole_worker
+#   roles: 
+#     - hadoop-all

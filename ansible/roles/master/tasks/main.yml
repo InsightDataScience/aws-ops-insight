@@ -1,0 +1,6 @@
+
+- name: register public IP address of master
+  debug:
+    msg: "{{ hostvars[ item ].ec2_private_dns_name.split('.')[0] }}"
+  loop: "{{ groups['tag_HadoopRole_worker'] }}"
+  register: worker_public_ips

@@ -36,7 +36,36 @@
     path: /home/ubuntu/.ssh/known_hosts
   with_items: "{{ ssh_known_host_results.results }}"
 
-- name: Add namenode and datanode mappings to /etc/hosts
-  debug:
-    var: "{{ item }}"
-    loop: "{{ query('ec2_public_dns_name', 'all') }}"
+- name: Add the public ip -> hostname mappings for the name node to /etc/hosts 
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ hostvars[ item ]['ec2_ip_address'] }} {{ hostvars[ item ]['ec2_private_dns_name'].split('.')[0] }} 
+    insertafter: "127.0.0.1 localhost"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item }}"
+  loop: "{{ groups['tag_HadoopRole_master'] }}"
+
+- name: Add the public ip -> hostname mappings for the data nodes to /etc/hosts 
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ hostvars[ item ]['ec2_ip_address'] }} {{ hostvars[ item ]['ec2_private_dns_name'].split('.')[0] }}
+    insertafter: "127.0.0.1 localhost"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item }}"
+  loop: "{{ groups['tag_HadoopRole_worker'] }}"
+
+- name: Copy over and configure hdfs-site.xml on the name node
+  template: 
+    src: hdfs-site.xml.j2
+    dest: /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+- name: Create directory for the metadata on the name node
+  file:
+    path: /usr/local/hadoop/hadoop_data/hdfs/namenode
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+
