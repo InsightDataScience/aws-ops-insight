@@ -1,0 +1,19 @@
+# Ansible playbook for formatting and starting up a pre-configured hadoop
+# using the ec2_instance_facts module
+
+- hosts: tag_HadoopRole_master
+  environment:
+    JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
+
+  tasks:
+  - name: format metadata on the namenode (WARNING - this deletes all data on HDFS)
+    # need to include the echo to answer yes if prompted for formatting
+    shell: echo 'Y' | /usr/local/hadoop/bin/hdfs namenode -format
+    become: yes
+    become_user: ubuntu
+
+  - name: start hdfs on all nodes in the cluster
+    shell: /usr/local/hadoop/sbin/start-dfs.sh
+    become: yes
+    become_user: ubuntu
+    

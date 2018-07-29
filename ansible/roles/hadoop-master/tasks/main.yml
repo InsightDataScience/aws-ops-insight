@@ -21,7 +21,7 @@
     group: ubuntu
     state: touch
 
-- name: Register ssh-keyscan results for all nodes in the cluster to add to known_hosts
+- name: Register ssh-keyscan results for all the public IP addresses in the cluster to add to known_hosts
   shell: "ssh-keyscan -t ecdsa {{ item }}"
   with_items: 
     - "localhost"
@@ -29,12 +29,54 @@
     - "{{ groups['tag_HadoopRole_worker'] }}"
   register: ssh_known_host_results
 
-- name: Add/update the public key
+- name: Add/update the public key for the public IP addresses
   known_hosts:
     name: "{{ item.item }}"
     key: "{{ item.stdout }}"
     path: /home/ubuntu/.ssh/known_hosts
   with_items: "{{ ssh_known_host_results.results }}"
+
+- name: Register ssh-keyscan results for all the public DNS names in the cluster to add to known_hosts
+  shell: "ssh-keyscan -t ecdsa {{ hostvars[ item ]['ec2_public_dns_name'] }}"
+  with_items: 
+    - "{{ groups['tag_HadoopRole_master'] }}"
+    - "{{ groups['tag_HadoopRole_worker'] }}"
+  register: ssh_known_host_dns_results
+
+- name: Add/update the public key for the public DNS names
+  known_hosts:
+    name: "{{ hostvars[ item.item ]['ec2_public_dns_name'] }}"
+    key: "{{ item.stdout }}"
+    path: /home/ubuntu/.ssh/known_hosts
+  with_items: "{{ ssh_known_host_dns_results.results }}"
+
+- name: Register ssh-keyscan results for all the private hostnames in the cluster to add to known_hosts
+  shell: "ssh-keyscan -t ecdsa {{ hostvars[ item ]['ec2_private_dns_name'].split('.')[0] }}"
+  with_items: 
+    - "{{ groups['tag_HadoopRole_master'] }}"
+    - "{{ groups['tag_HadoopRole_worker'] }}"
+  register: ssh_known_private_hostnames
+
+- name: Add/update the public key for the private hostnames
+  known_hosts:
+    name: "{{ hostvars[ item.item ]['ec2_private_dns_name'].split('.')[0] }}"
+    key: "{{ item.stdout }}"
+    path: /home/ubuntu/.ssh/known_hosts
+  with_items: "{{ ssh_known_private_hostnames.results }}"  
+
+- name: Register ssh-keyscan results for the name node's 0.0.0.0 address
+  shell: "ssh-keyscan -t ecdsa 0.0.0.0"
+  with_items: 
+    - "{{ groups['tag_HadoopRole_master'] }}"
+    - "{{ groups['tag_HadoopRole_worker'] }}"
+  register: ssh_known_loopback
+
+- name: Add/update the public key for the private hostnames
+  known_hosts:
+    name: "0.0.0.0"
+    key: "{{ item.stdout }}"
+    path: /home/ubuntu/.ssh/known_hosts
+  with_items: "{{ ssh_known_loopback.results }}" 
 
 - name: Add the public ip -> hostname mappings for the name node to /etc/hosts 
   blockinfile:

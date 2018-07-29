@@ -30,3 +30,11 @@
     owner: ubuntu
     group: ubuntu
     mode: 0644
+
+- name: Copy over and configure hadoop-env.sh on all nodes
+  template: 
+    src: hadoop-env.sh.j2
+    dest: /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
