@@ -8,13 +8,13 @@
         "access_key": "{{user `aws_access_key`}}",
         "secret_key": "{{user `aws_secret_key`}}",
         "region": "us-west-2",
-        "source_ami": "ami-4e79ed36",
+        "source_ami": "ami-0e32ec5bc225539f5",
         "instance_type": "m4.large",
         "ssh_username": "ubuntu",
-        "ami_name": "insight-fellows-{{timestamp}}",
+        "ami_name": "insight-spark-{{timestamp}}",
         "ami_groups": "all",
         "tags": {
-              "Name": "insight-fellows-packer"
+              "Name": "insight-spark-packer"
         }
     }],
     "provisioners": [
