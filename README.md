@@ -84,10 +84,14 @@ If all went well, you have the following resources added:
 - Security Group, with all ports open to and from any IP
 - 4 node cluster, with 1 "master" and 3 "workers"
 
+### Destroying your infrastructure
+
 **Don't** destroy your infra now, but if you ever want to tear down your infrastructure, you can always do that with the command:
 
     terraform destroy
-    
+
+If you want to destroy a subset of your infrastructure, simply change you `main.tf` file accordingly and re-run the `tf apply` to apply these changes. Terraform tracks the current state in the `terraform.tfstate` file (or a remote backend like S3 or Consul), but if you manually delete resources on the console, this can mess up your Terraform state. As a result, **we don't recommend mixing a Terraform and manual setup** - try to do everything within Terraform if possible.
+
 ### Setting Terraform Variables
 You probably don't want to enter your name everytime you run the apply command (and you can't automate that), so let's set the variable. You could set the variable from the command line with something like:
 
@@ -120,13 +124,17 @@ We'll start configuring machines with the scripts in the `ansible` directory. Ch
 
 In order for your control machine to SSH into your nodes via Ansible, it will need your PEM key stored on it. You can add it with a `scp` command like the following (**which should be ran from your local machine, not the control machine**):
 
-    scp -i ~/.ssh/control.pem ~/.ssh/david-IAM-keypair.pem david-d@ops.insightdata.com:~/.ssh/
+    scp -i ~/.ssh/control.pem ~/.ssh/david-IAM-keypair.pem david-d@bos.insightdata.com:~
     
 or if you've set up your `.ssh/config` file as described above, it would be something like (but with **your name and key**):
 
-    scp ~/.ssh/david-IAM-keypair.pem dd-control:~/.ssh/
+    scp ~/.ssh/david-IAM-keypair.pem dd-control:~
 
-Back on the control machine, you'll also need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This sets global configuration This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
+**Back on the control machine**, copy your keypair to the `.ssh` folder on your control machine, with a command similar to:
+
+    sudo mv ~/david-IAM-keypair.pem ~/.ssh
+
+Next, you'll need to configure the `ansible.cfg` file to reflect your key pair name and location on the control machine. This sets global configuration This also assumes that this repo is cloned into your home directory. The relevant lines of the `ansible.cfg` are:
 
     [defaults]
     host_key_checking = False
