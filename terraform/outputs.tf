@@ -11,6 +11,7 @@ outputs for a new module (and nest these modules within)
 
  */
 
- output "cluster_size" {
- 	value = "${aws_instance.cluster_master.count + aws_instance.cluster_workers.count}"
- }
+output "cluster_size" {
+  value = length(aws_instance.cluster_master) + length(aws_instance.cluster_workers)
+}
+
