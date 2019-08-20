@@ -1,43 +1,15 @@
 # AWS Ops for Insight
-Collection of Terraform and Ansible scripts for easy AWS operations
+Collection of Terraform (0.12.x) and Ansible scripts for easy AWS operations.
 
-# Set up your Linux User on the Shared Control Machine
-The entire setup will be done from the Control machine, which you can log into with a Linux user that has been created for you already. Before you can start setting up AWS, you need to log into the control machine:
+## Clone this repo into the home directory to your local machine
 
-## Logging into the Control Machine
-On your local machine, download the `control.pem` key from Mattermost, and make sure the `control.pem` has the proper permissions with:
-
-    chmod 400 <path/to/your/pem.key>
-
-Next log into your user on the Control Machine provided by Insight, which you should be able to do with a command using the following command: 
-
-    ssh -i <path/to/your/pem.key> <lowercase_first_name>-<lowercase_last_initial>@<location>.insightdata.com
-    
-Where location is either `bos`, `ny`, or `sv` depending on your location. For example, assuming your PEM key is in your `.ssh` directory, you can log into the Boston control machine with:
-
-    ssh -i ~/.ssh/control.pem david-d@bos.insightdata.com
-
-Alternatively, use `nano ~/.ssh/config` or `vim ~/.ssh/config` to add the following to my local machine's `.ssh/config`:
-
-    Host dd-control
-        HostName bos.insightdata.com
-        User david-d
-        Port 22
-        IdentityFile ~/.ssh/control.pem
-        
-and then log in using the command `ssh dd-control` for my convenience. 
-
-**The remainder of the commands in the setup are all done from the control machine.**
-
-## Clone this repo into the home directory on the control machine
-
-This machine is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup. However, you still need to change to the home directory (abbreviated `~` in bash) and download the latest scripts from this repo:
+This repo is pre-installed with Terraform and Ansible, and is designed to allow you to spin up the necessary infrastructure with minimal setup. However, you still need to change to the home directory (abbreviated `~` in bash) and download the latest scripts from this repo:
     
     cd ~
     git clone https://github.com/InsightDataScience/aws-ops-insight.git
 
 ## AWS credentials for your IAM user (not the root account)
-Your Linux user has a `.profile` file in your home directory where you can configure your control machine. Add the AWS credentials for your IAM user to your `.profile` using your editor of choice (e.g. with a command like `nano ~/.profile` or `vim ~/.profile`). Of course, your credentials will be different, but you should have something like this in your `.profile`:
+Your Linux user has a `.profile` file in your home directory where you can configure your local machine. The AWS credentials for your IAM user should be placed in the `.profile` using your editor of choice (e.g. with a command like `nano ~/.profile` or `vim ~/.profile`). Of course, your credentials will be different, but you should have something like this in your `.profile`:
 
     export AWS_ACCESS_KEY_ID=ABCDE1F2G3HIJKLMNOP  
     export AWS_SECRET_ACCESS_KEY=1abc2d34e/f5ghJKlmnopqSr678stUV/WXYZa12
@@ -50,7 +22,7 @@ Whenever you change your `.profile`, don't forget to source it with the command 
     
 # Setting up your AWS Environment
 
-We'll start by using Terraform to "provision" resources on your AWS account. Terraform is an industry-standard open source technology for provisioning hardware, whether on any popular cloud provider (e.g. AWS, GCP), or in-house data centers. Terraform is written in Go, and is designed to quickly and easily create and destroy infrastructure of hundreds of resources in parallel. 
+We'll start by using Terraform to "provision" resources on your AWS account. Terraform is an industry-standard open source technology for provisioning hardware, whether on any popular cloud providers (e.g. AWS, GCP, Azure), or in-house data centers. Terraform is written in Go, and is designed to quickly and easily create and destroy infrastructure of hundreds of resources in parallel. 
 
 Terraform also has a great community of open source modules available in the [Terraform Registry](https://registry.terraform.io/). We'll be using several of the pre-built AWS modules now.
 
@@ -81,7 +53,7 @@ Terraform is designed to be idempotent, so you can always run the `terraform app
 If all went well, you have the following resources added:
 
 - VPC sandbox with all the necessary networking
-- Security Group, with all ports open to and from any IP
+- Security Group, with all ports open to and from any IP -- highly recommended restricting connections to services that you'll need (i.e.SSH-port 22, http-port80).
 - 4 node cluster, with 1 "master" and 3 "workers"
 
 ### Destroying your infrastructure
@@ -90,12 +62,12 @@ If all went well, you have the following resources added:
 
     terraform destroy
 
-If you want to destroy a subset of your infrastructure, simply change you `main.tf` file accordingly and re-run the `tf apply` to apply these changes. Terraform tracks the current state in the `terraform.tfstate` file (or a remote backend like S3 or Consul), but if you manually delete resources on the console, this can mess up your Terraform state. As a result, **we don't recommend mixing a Terraform and manual setup** - try to do everything within Terraform if possible.
+If you want to destroy a subset of your infrastructure, simply change your `main.tf` file accordingly and re-run the `tf apply` to apply these changes. Terraform tracks the current state in the `terraform.tfstate` file (or a remote backend like S3 or Consul), but if you manually delete resources on the console, this can mess up your Terraform state. As a result, **we don't recommend mixing a Terraform and manual setup** - try to do everything within Terraform if possible.
 
 ### Setting Terraform Variables
 You probably don't want to enter your name everytime you run the apply command (and you can't automate that), so let's set the variable. You could set the variable from the command line with something like:
 
-    terraform apply -var 'fellow_name=david'
+    terraform apply -var 'fellow_name=Insert Name Here'
     
 or by setting an environment variable that starts with `TF_VAR_` like:
 
@@ -106,10 +78,10 @@ or by setting an environment variable that starts with `TF_VAR_` like:
 Finally, you can set variables in the file `terraform.tfvars`. Go into the file and uncomment the lines with variables (but use your name and key pair, of course):
 
     # name of the Fellow (swap for your name)
-    fellow_name="david"
+    fellow_name="Insert Name Here"
 
     # name of your key pair (already created in AWS)
-    keypair_name="david-IAM-keypair"
+    keypair_name="Insert Name Here-IAM-keypair"
 
 For security, **YOU SHOULD NEVER PUT YOUR AWS CREDENTIALS IN A FILE THAT COULD BE COMMITTED TO GITHUB**, so you can use environment variables for your credentials. For other types of variables, you should use the method that's most convenient (e.g. files are easy to share with others, but the command line could be easier when prototyping).
 
