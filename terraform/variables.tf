@@ -9,28 +9,28 @@ set at the command line, with .tfvars files, or with environment variables
 
 variable "aws_region" {
   description = "AWS region to launch servers."
-  default     = "us-west-2"
+  default     = "us-east-2"
 }
 
 variable "keypair_name" {
-	description = "The name of your pre-made key-pair in Amazon (e.g. david-IAM-keypair )" 
-} 
+  description = "The name of your pre-made key-pair in Amazon (e.g. david-IAM-keypair )"
+}
 
 variable "fellow_name" {
   description = "The name that will be tagged on your resources."
 }
 
 variable "amis" {
-  type = "map"
+  type = map (string)
   default = {
-    "us-east-1" = "ami-0e32dc18"
-    "us-west-2" = "ami-060eece82fbcf60c9"
+    "us-east-2" = "ami-05c1fa8df71875112"
+    "us-west-2" = "ami-0c579621aaac8bade"
   }
 }
 
 variable "cluster_name" {
-	description = "The name for your instances in your cluster" 
-	default 	= "cluster"
+  description = "The name for your instances in your cluster"
+  default     = "cluster"
 }
 
 /*	
@@ -53,4 +53,4 @@ variable "aws_secret_key" {
 	description = "AWS secret key (e.g. 1abc2d34e/f5ghJKlmnopqSr678stUV/WXYZa12 )"	
 }
 
- */ 
+ */
