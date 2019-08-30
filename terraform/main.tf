@@ -31,7 +31,7 @@ module "sandbox_vpc" {
 
   cidr           = "10.0.0.0/26"
   azs            = ["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"]
-  public_subnets = ["10.0.0.0/28"]
+  public_subnets = ["10.0.0.0/26"]
 
   enable_dns_support   = true
   enable_dns_hostnames = true

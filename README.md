@@ -34,6 +34,22 @@ AWS uses software-defined network to offer a small network that is secure from o
 Move into the `terraform` directory of the repo you just cloned:
 
     cd aws-ops-insight/terraform
+
+Edit the variables.tf file. Navigate to the variable "aws_region", input applicable AWS region.
+
+variable "aws_region" {
+  description = "AWS region to launch servers. For NY,BOS,VA use us-east-1. For SF use us-west-2"
+  default     = "Insert AWS Region here"
+
+Navigate to the variable "amis", remove the region amazon machine image (AMI) that isn't applicable.
+
+variable "amis" {
+ type = map (string)
+  default = {
+    "us-east-1" = "ami-00290d66f0da25f73"
+    "us-west-2" = "ami-03286c54f2490b96e"
+
+Save and exit the variables.tf file.
     
 Then initialize Terraform and apply the configuration we've set up in the `.tf` files within that directory:
 
