@@ -23,8 +23,8 @@ variable "fellow_name" {
 variable "amis" {
  type = map (string)
   default = {
-    "us-east-1" = "ami-00290d66f0da25f73"
-    "us-west-2" = "ami-03286c54f2490b96e"
+    "us-east-1" = "ami-0b6b1f8f449568786"
+    "us-west-2" = "ami-02c8040256f30fb45"
   }
 }
 

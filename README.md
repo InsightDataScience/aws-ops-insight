@@ -46,8 +46,8 @@ Navigate to the variable "amis", remove the region amazon machine image (AMI) th
 variable "amis" {
  type = map (string)
   default = {
-    "us-east-1" = "ami-00290d66f0da25f73"
-    "us-west-2" = "ami-03286c54f2490b96e"
+    "us-east-1" = "ami-0b6b1f8f449568786"
+    "us-west-2" = "ami-02c8040256f30fb45"
 
 Save and exit the variables.tf file.
     
@@ -69,7 +69,7 @@ Terraform is designed to be idempotent, so you can always run the `terraform app
 If all went well, you have the following resources added:
 
 - VPC sandbox with all the necessary networking
-- Security Group, with all ports open to and from any IP -- highly recommended restricting connections to services that you'll need (i.e.SSH-port 22, http-port80).
+- Security Group with inbound SSH connectivity from your local machine.
 - 4 node cluster, with 1 "master" and 3 "workers"
 
 ### Destroying your infrastructure
