@@ -10,8 +10,8 @@ Alternatively, use environment variables for your credentials
  */
 
 # name of the Fellow (swap for your name)
-fellow_name="Insert Name Here"
+fellow_name="Insert your name here"
 
 # name of your key pair (already created in AWS)
-keypair_name="InsertName-IAM-keypair"
+keypair_name="Insert your name here-IAM-keypair"
 
